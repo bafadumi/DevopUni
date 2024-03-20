@@ -12,7 +12,7 @@ export const CONFIG: Config = {
     hostedZoneName: process.env.AWS_HOSTED_ZONE_NAME || 'devops.com',
     hostedZoneId: process.env.AWS_HOSTED_ZONE_ID || 'Z010502913W53UOD7EHXA',
 };
-export type Stage = 'Beta' | 'Prod';
+export const STAGES = ['Beta', 'Prod'] as const;
 
 const REGION = 'us-east-1';
 export const ENV: Environment = { region: REGION };
