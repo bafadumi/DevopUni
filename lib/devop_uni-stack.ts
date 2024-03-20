@@ -7,6 +7,7 @@ import { Stage, ENV } from "./config";
 import { AuthStack } from './stacks/auth-stack';
 import { BackendStack } from './stacks/backend-stack';
 import { CustomStage } from './types';
+import { UIStack } from './stacks/front-end-stack';
 
 
 const GITHUB_SOURCE_REPO = 'bafadumi/DevopUni';
@@ -14,7 +15,7 @@ const GITHUB_SOURCE_REPO = 'bafadumi/DevopUni';
 const HOSTED_ZONE_ID = 'Z010502913W53UOD7EHXA';
 const HOSTED_ZONE_NAME = 'devops.com';
 
-const DOMAIN_SUFFIX = `Learn-Be-Curious.${HOSTED_ZONE_NAME}`;
+const DOMAIN_SUFFIX = `learn-be-curious.${HOSTED_ZONE_NAME}`;
 
 const BETA_DOMAIN_NAME = `beta.${DOMAIN_SUFFIX}`;
 const PROD_DOMAIN_NAME = `${DOMAIN_SUFFIX}`;
@@ -27,7 +28,7 @@ interface CustomStageProps extends StageProps {
 }
 
 const BACKEND_ASSET_ROUTE = '../DevopUni/backend';
-//const FRONTEND_ASSET_ROUTE = '../frontend/build';
+const FRONTEND_ASSET_ROUTE = '../DevopUni/frontend/build';
 
 export class PipelineStage extends CDKStage {
   constructor(scope: Construct, id: string, props: CustomStageProps) {
@@ -42,6 +43,14 @@ export class PipelineStage extends CDKStage {
       assetRoute: BACKEND_ASSET_ROUTE,
       userPoolClient,
       stage,
+    });
+
+    new UIStack(this, `${stage}DevOpsUIStack`, {
+      domainName,
+      hostedZoneName,
+      stage,
+      hostedZoneId,
+      frontEndAssetRoute: FRONTEND_ASSET_ROUTE,
     });
   }
 }
