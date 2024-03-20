@@ -10,6 +10,7 @@ import { CustomStage } from './types';
 import { UIStack } from './stacks/front-end-stack';
 
 
+
 const GITHUB_SOURCE_REPO = 'bafadumi/DevopUni';
 
 const HOSTED_ZONE_ID = 'Z010502913W53UOD7EHXA';
@@ -61,6 +62,30 @@ export class DevopUniStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
+    const sourceAction = CodePipelineSource.gitHub('bafadumi/DevopUni', 'main');
+
+    const frontendBuildAction = new CodeBuildStep('FrontendBuild', {
+      input: sourceAction,
+      commands: ['cd frontend', 'npm ci', 'npm run build', 'cd ..'],
+      primaryOutputDirectory: './',
+    });
+
+    const backendBuildAction = new CodeBuildStep('BackendBuild', {
+      input: frontendBuildAction,
+      commands: ['cd backend', 'npm ci', 'npm run build', 'cd ..'],
+      primaryOutputDirectory: './',
+    });
+
+    const synthAction = new CodeBuildStep('Synth', {
+      input: backendBuildAction,
+      installCommands: [
+        // Globally install cdk in the container
+        'npm install -g aws-cdk',
+      ],
+      commands: ['cd lib', 'npm ci', 'npm run build', 'npx cdk synth', 'cd ..'],
+      // Synth step must output to cdk.out for mutation/deployment
+      primaryOutputDirectory: './',
+    });
 
     new CodePipeline(this, 'Pipeline', {
       pipelineName: 'DevOpsAssignmentPipeline',
@@ -68,35 +93,11 @@ export class DevopUniStack extends cdk.Stack {
         input: CodePipelineSource.gitHub(GITHUB_SOURCE_REPO, 'main', {
           authentication: cdk.SecretValue.secretsManager('my-secret-token'),
         }),
-        installCommands: [
-          // Globally install cdk in the container
-          'npm install -g aws-cdk',
-        ],
         commands: ['npm ci', 'npm run build', 'npx cdk synth'],
-        primaryOutputDirectory: "./",
+        primaryOutputDirectory: './',
       }),
     });
-    STAGES.forEach((stage) => this.setupStage(stage));
-  }
-  setupStage(stage: CustomStage): void {
-    const { hostedZoneName, hostedZoneId } = CONFIG;
-    const pipelineStage = this.pipeline.addStage(
-      new PipelineStage(this, stage, {
-        stage,
-        hostedZoneId: hostedZoneId,
-        hostedZoneName: hostedZoneName,
-        domainName: `${stage.toLocaleLowerCase()}.dev-ops-assignment.${hostedZoneName}`,
-      }),
-    );
-    pipelineStage.addPre(
-      new ShellStep(`Test${stage}`, {
-        commands: [...STEP_COMMANDS, stage === 'Beta' ? 'npm run test' : 'npm run test'],
-      }),
-    );
-    pipelineStage.addPost(
-      new ShellStep('HealthCheck', {
-        commands: [`curl -Ssf ${stage.toLocaleLowerCase()}.dev-ops-assignment.${hostedZoneName}`],
-      }),
-    );
+
+
   }
 } 
