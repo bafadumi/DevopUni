@@ -1,6 +1,5 @@
 import React from 'react';
 import './css/App.css';
-import HeroBanner from "../src/assests/hero-banner.jpg"
 import LandingPage from './components/LandingPage';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import MainPage from './components/MainPage';

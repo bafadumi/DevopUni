@@ -73,6 +73,7 @@ export class DevopUniStack extends cdk.Stack {
           'npm install -g aws-cdk',
         ],
         commands: ['npm ci', 'npm run build', 'npx cdk synth'],
+        primaryOutputDirectory: "./",
       }),
     });
     STAGES.forEach((stage) => this.setupStage(stage));
