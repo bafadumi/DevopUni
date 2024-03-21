@@ -8,8 +8,8 @@ import { AuthStack } from './stacks/auth-stack';
 import { BackendStack } from './stacks/backend-stack';
 import { CustomStage } from './types';
 import { UIStack } from './stacks/front-end-stack';
-
-
+import * as codepipeline from '@aws-cdk/aws-codepipeline';
+import * as codepipeline_actions from '@aws-cdk/aws-codepipeline-actions';
 
 const GITHUB_SOURCE_REPO = 'bafadumi/DevopUni';
 
@@ -62,18 +62,26 @@ export class DevopUniStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const sourceAction = CodePipelineSource.gitHub('bafadumi/DevopUni', 'main');
+    const sourceAction = CodePipelineSource.gitHub('bafadumi/DevopUni', 'main', {
+      authentication: cdk.SecretValue.secretsManager('my-secret-token'),
+    });;
 
     const frontendBuildAction = new CodeBuildStep('FrontendBuild', {
       input: sourceAction,
       commands: ['cd frontend', 'npm ci', 'npm run build', 'cd ..'],
       primaryOutputDirectory: './',
+      env: {
+        AWS_GITHUB_TOKEN: cdk.SecretValue.secretsManager('my-secret-token').unsafeUnwrap(),
+      },
     });
 
     const backendBuildAction = new CodeBuildStep('BackendBuild', {
       input: frontendBuildAction,
       commands: ['cd backend', 'npm ci', 'npm run build', 'cd ..'],
       primaryOutputDirectory: './',
+      env: {
+        AWS_GITHUB_TOKEN: cdk.SecretValue.secretsManager('my-secret-token').unsafeUnwrap(),
+      },
 
     });
 
@@ -83,7 +91,7 @@ export class DevopUniStack extends cdk.Stack {
         // Globally install cdk in the container
         'npm install -g aws-cdk',
       ],
-      commands: ['cd lib', 'npm ci', 'npm run build', 'npx cdk synth', 'cd ..'],
+      commands: ['cd bin', 'npm ci', 'npm run build', 'npx cdk synth', 'cd ..'],
       // Synth step must output to cdk.out for mutation/deployment
       primaryOutputDirectory: './',
       env: {
@@ -94,9 +102,7 @@ export class DevopUniStack extends cdk.Stack {
     new CodePipeline(this, 'Pipeline', {
       pipelineName: 'DevOpsAssignmentPipeline',
       synth: synthAction,
+
     });
-
-
   }
 }
-authentication: cdk.SecretValue.secretsManager('my-secret-token')
