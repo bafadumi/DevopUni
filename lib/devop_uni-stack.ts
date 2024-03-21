@@ -74,6 +74,7 @@ export class DevopUniStack extends cdk.Stack {
       input: frontendBuildAction,
       commands: ['cd backend', 'npm ci', 'npm run build', 'cd ..'],
       primaryOutputDirectory: './',
+
     });
 
     const synthAction = new CodeBuildStep('Synth', {
@@ -85,11 +86,17 @@ export class DevopUniStack extends cdk.Stack {
       commands: ['cd lib', 'npm ci', 'npm run build', 'npx cdk synth', 'cd ..'],
       // Synth step must output to cdk.out for mutation/deployment
       primaryOutputDirectory: './',
+      env: {
+        AWS_GITHUB_TOKEN: cdk.SecretValue.secretsManager('my-secret-token').unsafeUnwrap(),
+      },
     });
 
     new CodePipeline(this, 'Pipeline', {
       pipelineName: 'DevOpsAssignmentPipeline',
-      synth: synthAction
+      synth: synthAction,
     });
+
+
   }
 }
+authentication: cdk.SecretValue.secretsManager('my-secret-token')
