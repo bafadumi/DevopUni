@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom';
-import HeroBanner from '../assests/hero-banner.jpg';
+import React from 'react';
+import HeroBanner from '../assests/L&BC.png';
 
 export const LandingPage = () => {
     const heroBannerStyle = {

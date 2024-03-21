@@ -1,4 +1,5 @@
-import { UserIsSignedIn, UserIsSignedOut } from '../cognito/context';
+import React from 'react';
+import { UserIsSignedIn, UserIsSignedOut } from '../config/context';
 import IdeaTable from './IdeaTable';
 import AddOrUpdateModal, { AddOrUpdate } from './modal/AddOrUpdateModal';
 

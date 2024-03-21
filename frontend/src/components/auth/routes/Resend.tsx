@@ -4,8 +4,8 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../../cognito/context';
-import { useValidateUsername } from '../../../cognito/validationHooks';
+import { AuthContext } from '../../../config/context';
+import { useValidateUsername } from '../../../config/validationHooks';
 import AuthComponent from '../AuthComponent';
 
 const Resend = () => {

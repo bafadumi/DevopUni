@@ -1,12 +1,12 @@
 import { Paper, Box, Typography, Button } from '@mui/material';
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../../cognito/context';
+import { AuthContext } from '../../../config/context';
 import {
     useValidateVerificationCode,
     useValidatePassword,
     useValidateUsername,
-} from '../../../cognito/validationHooks';
+} from '../../../config/validationHooks';
 import AuthComponent from '../AuthComponent';
 
 const ForgotPassword = () => {

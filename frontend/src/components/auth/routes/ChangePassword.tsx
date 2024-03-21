@@ -1,8 +1,8 @@
 import { Paper, Box, Typography, Button } from '@mui/material';
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AuthContext, AuthState } from '../../../cognito/context';
-import { useValidatePassword } from '../../../cognito/validationHooks';
+import { AuthContext, AuthState } from '../../../config/context';
+import { useValidatePassword } from '../../../config/validationHooks';
 import AuthComponent from '../AuthComponent';
 
 const ChangePassword = () => {
