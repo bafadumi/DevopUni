@@ -89,15 +89,7 @@ export class DevopUniStack extends cdk.Stack {
 
     new CodePipeline(this, 'Pipeline', {
       pipelineName: 'DevOpsAssignmentPipeline',
-      synth: new ShellStep('Synth', {
-        input: CodePipelineSource.gitHub(GITHUB_SOURCE_REPO, 'main', {
-          authentication: cdk.SecretValue.secretsManager('my-secret-token'),
-        }),
-        commands: ['npm ci', 'npm run build', 'npx cdk synth'],
-        primaryOutputDirectory: './',
-      }),
+      synth: synthAction
     });
-
-
   }
-} 
+}
