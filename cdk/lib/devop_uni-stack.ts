@@ -91,7 +91,7 @@ export class DevopUniStack extends cdk.Stack {
         // Globally install cdk in the container
         'npm install -g aws-cdk',
       ],
-      commands: ['cd bin', 'npm ci', 'npm run build', 'npx cdk synth', 'cd ..'],
+      commands: ['cd cdk', 'npm ci', 'npm run build', 'npx cdk synth', 'cd ..'],
       // Synth step must output to cdk.out for mutation/deployment
       primaryOutputDirectory: './',
       env: {
