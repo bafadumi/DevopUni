@@ -38,8 +38,8 @@ interface CustomStageProps extends StageProps {
   domainName: string;
 }
 
-const BACKEND_ASSET_ROUTE = "../DevopUni/backend";
-const FRONTEND_ASSET_ROUTE = "../DevopUni/frontend/build";
+const BACKEND_ASSET_ROUTE = "../backend";
+const FRONTEND_ASSET_ROUTE = "../frontend/build";
 
 export class PipelineStage extends CDKStage {
   constructor(scope: Construct, id: string, props: CustomStageProps) {
@@ -119,9 +119,27 @@ export class DevopUniStack extends cdk.Stack {
       },
     });
 
-    new CodePipeline(this, "Pipeline", {
+    const pipeline = new CodePipeline(this, "Pipeline", {
       pipelineName: "DevOpsAssignmentPipeline",
       synth: synthAction,
     });
+
+    const betaStage = new PipelineStage(this, "BetaLearnBeCuriousStage", {
+      env: ENV,
+      stage: "Beta",
+      hostedZoneId: HOSTED_ZONE_ID,
+      hostedZoneName: HOSTED_ZONE_NAME,
+      domainName: BETA_DOMAIN_NAME,
+    });
+
+    const prodStage = new PipelineStage(this, "ProdLearnBeCuriousStage", {
+      env: ENV,
+      stage: "Prod",
+      hostedZoneId: HOSTED_ZONE_ID,
+      hostedZoneName: HOSTED_ZONE_NAME,
+      domainName: PROD_DOMAIN_NAME,
+    });
+    pipeline.addStage(betaStage);
+    pipeline.addStage(prodStage);
   }
 }
