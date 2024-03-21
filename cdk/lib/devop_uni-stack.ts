@@ -1,23 +1,33 @@
-import * as cdk from 'aws-cdk-lib';
-import { Stack, StackProps, Stage as CDKStage, StageProps } from 'aws-cdk-lib';
-import { Construct } from 'constructs';
-import { CodeBuildStep, CodePipeline, CodePipelineSource, ShellStep } from 'aws-cdk-lib/pipelines';
-import * as sqs from 'aws-cdk-lib/aws-sqs';
+import * as cdk from "aws-cdk-lib";
+import { Stack, StackProps, Stage as CDKStage, StageProps } from "aws-cdk-lib";
+import { Construct } from "constructs";
+import {
+  CodeBuildStep,
+  CodePipeline,
+  CodePipelineSource,
+  ShellStep,
+} from "aws-cdk-lib/pipelines";
+import * as sqs from "aws-cdk-lib/aws-sqs";
 import { STAGES, ENV, CONFIG } from "./config";
-import { AuthStack } from './stacks/auth-stack';
-import { BackendStack } from './stacks/backend-stack';
-import { CustomStage } from './types';
-import { UIStack } from './stacks/front-end-stack';
-import * as codepipeline from '@aws-cdk/aws-codepipeline';
-import * as codepipeline_actions from '@aws-cdk/aws-codepipeline-actions';
+import { AuthStack } from "./stacks/auth-stack";
+import { BackendStack } from "./stacks/backend-stack";
+import { CustomStage } from "./types";
+import { UIStack } from "./stacks/front-end-stack";
+import * as codepipeline from "@aws-cdk/aws-codepipeline";
+import * as codepipeline_actions from "@aws-cdk/aws-codepipeline-actions";
 
-const GITHUB_SOURCE_REPO = 'bafadumi/DevopUni';
+const GITHUB_SOURCE_REPO = "bafadumi/DevopUni";
 
-const HOSTED_ZONE_ID = 'Z010502913W53UOD7EHXA';
-const HOSTED_ZONE_NAME = 'devops.com';
+const HOSTED_ZONE_ID = "Z010502913W53UOD7EHXA";
+const HOSTED_ZONE_NAME = "devops.com";
 
 const DOMAIN_SUFFIX = `learn-be-curious.${HOSTED_ZONE_NAME}`;
-const STEP_COMMANDS = ['npm ci', 'npm run bootstrap', 'npm run install-all', 'npm run build'];
+const STEP_COMMANDS = [
+  "npm ci",
+  "npm run bootstrap",
+  "npm run install-all",
+  "npm run build",
+];
 const BETA_DOMAIN_NAME = `beta.${DOMAIN_SUFFIX}`;
 const PROD_DOMAIN_NAME = `${DOMAIN_SUFFIX}`;
 
@@ -28,8 +38,8 @@ interface CustomStageProps extends StageProps {
   domainName: string;
 }
 
-const BACKEND_ASSET_ROUTE = '../DevopUni/backend';
-const FRONTEND_ASSET_ROUTE = '../DevopUni/frontend/build';
+const BACKEND_ASSET_ROUTE = "../DevopUni/backend";
+const FRONTEND_ASSET_ROUTE = "../DevopUni/frontend/build";
 
 export class PipelineStage extends CDKStage {
   constructor(scope: Construct, id: string, props: CustomStageProps) {
@@ -37,7 +47,11 @@ export class PipelineStage extends CDKStage {
 
     const { stage, hostedZoneName, domainName, hostedZoneId } = props;
 
-    const { userPool, userPoolClient } = new AuthStack(this, `${stage}DevOpsAuthStack`, { stage: stage });
+    const { userPool, userPoolClient } = new AuthStack(
+      this,
+      `${stage}DevOpsAuthStack`,
+      { stage: stage }
+    );
 
     new BackendStack(this, `${stage}DevOpsBackend`, {
       userPool,
@@ -62,47 +76,52 @@ export class DevopUniStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
 
-    const sourceAction = CodePipelineSource.gitHub('bafadumi/DevopUni', 'main', {
-      authentication: cdk.SecretValue.secretsManager('my-secret-token'),
-    });;
+    const sourceAction = CodePipelineSource.gitHub(
+      "bafadumi/DevopUni",
+      "main",
+      {
+        authentication: cdk.SecretValue.secretsManager("my-secret-token"),
+      }
+    );
 
-    const frontendBuildAction = new CodeBuildStep('FrontendBuild', {
+    const frontendBuildAction = new CodeBuildStep("FrontendBuild", {
       input: sourceAction,
-      commands: ['cd frontend', 'npm ci', 'npm run build', 'cd ..'],
-      primaryOutputDirectory: './',
+      commands: ["cd frontend", "npm ci", "npm run build", "cd .."],
+      primaryOutputDirectory: "./",
       env: {
-        AWS_GITHUB_TOKEN: cdk.SecretValue.secretsManager('my-secret-token').unsafeUnwrap(),
+        AWS_GITHUB_TOKEN:
+          cdk.SecretValue.secretsManager("my-secret-token").unsafeUnwrap(),
       },
     });
 
-    const backendBuildAction = new CodeBuildStep('BackendBuild', {
+    const backendBuildAction = new CodeBuildStep("BackendBuild", {
       input: frontendBuildAction,
-      commands: ['cd backend', 'npm ci', 'npm run build', 'cd ..'],
-      primaryOutputDirectory: './',
+      commands: ["cd backend", "npm ci", "npm run build", "cd .."],
+      primaryOutputDirectory: "./",
       env: {
-        AWS_GITHUB_TOKEN: cdk.SecretValue.secretsManager('my-secret-token').unsafeUnwrap(),
+        AWS_GITHUB_TOKEN:
+          cdk.SecretValue.secretsManager("my-secret-token").unsafeUnwrap(),
       },
-
     });
 
-    const synthAction = new CodeBuildStep('Synth', {
+    const synthAction = new CodeBuildStep("Synth", {
       input: backendBuildAction,
       installCommands: [
         // Globally install cdk in the container
-        'npm install -g aws-cdk',
+        "npm install -g aws-cdk",
       ],
-      commands: ['cd cdk', 'npm ci', 'npm run build', 'npx cdk synth', 'cd ..'],
+      commands: ["cd cdk", "npm ci", "npm run build", "npx cdk synth", "cd .."],
       // Synth step must output to cdk.out for mutation/deployment
-      primaryOutputDirectory: './',
+      primaryOutputDirectory: "./",
       env: {
-        AWS_GITHUB_TOKEN: cdk.SecretValue.secretsManager('my-secret-token').unsafeUnwrap(),
+        AWS_GITHUB_TOKEN:
+          cdk.SecretValue.secretsManager("my-secret-token").unsafeUnwrap(),
       },
     });
 
-    new CodePipeline(this, 'Pipeline', {
-      pipelineName: 'DevOpsAssignmentPipeline',
+    new CodePipeline(this, "Pipeline", {
+      pipelineName: "DevOpsAssignmentPipeline",
       synth: synthAction,
-
     });
   }
 }
