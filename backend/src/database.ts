@@ -8,7 +8,7 @@ import { isOptionsRequest, isAdmin, parseSchema } from './resultApi/utils';
 import { deleteIdea } from '../src/api/deleteIdea';
 import { getSchema } from '../src/api/getIdeas';
 import { deleteSchema } from '../src/api/deleteIdea';
-import { addOrUpdateSchema } from '../src/api/addIdea'
+import { addOrUpdateSchema } from '../src/api/addIdea';
 import { getAllIdeas } from '../src/api/getIdeas';
 
 export const unWrappedHandler = async (
@@ -28,7 +28,7 @@ export const unWrappedHandler = async (
             parseSchema(getSchema, event.body);
             return await getAllIdeas(client, tableName);
         } catch (error) {
-            if (typeof error == "string") {
+            if (typeof error == 'string') {
                 console.log(error);
                 return errorResponse(error);
             }
@@ -42,7 +42,7 @@ export const unWrappedHandler = async (
 
             return await addIdea(request, client, tableName);
         } catch (error) {
-            if (typeof error == "string") {
+            if (typeof error == 'string') {
                 console.log(error);
                 return errorResponse(error);
             }
@@ -61,7 +61,7 @@ export const unWrappedHandler = async (
 
             return await updateIdea(request, client, tableName);
         } catch (error) {
-            if (typeof error == "string") {
+            if (typeof error == 'string') {
                 console.log(error);
                 return errorResponse(error);
             }
@@ -79,7 +79,7 @@ export const unWrappedHandler = async (
             console.log(request);
             return await deleteIdea(request, client, tableName);
         } catch (error) {
-            if (typeof error == "string") {
+            if (typeof error == 'string') {
                 console.log(error);
                 return errorResponse(error);
             }

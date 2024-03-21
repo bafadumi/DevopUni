@@ -1,4 +1,4 @@
-import { AddOrUpdateRequest } from './addIdea'
+import { AddOrUpdateRequest } from './addIdea';
 import { DynamoDBDocumentClient, ExecuteStatementCommandInput } from '@aws-sdk/lib-dynamodb';
 import { ExecuteStatementCommand } from '@aws-sdk/client-dynamodb';
 import { successResponse } from '../resultApi/responses';

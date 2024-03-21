@@ -16,6 +16,4 @@ export const getAllIdeas = async (dbClient: DynamoDBDocumentClient, tableName: s
     return successResponse(response?.Items);
 };
 
-
-
 export type GetRequest = z.infer<typeof getSchema>;
