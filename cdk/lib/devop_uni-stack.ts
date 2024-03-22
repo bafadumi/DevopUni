@@ -9,7 +9,6 @@ import { BackendStack } from './stacks/backend-stack';
 import { CustomStage } from './types';
 import { UIStack } from './stacks/front-end-stack';
 
-
 const GITHUB_SOURCE_REPO = 'bafadumi/DevopUni';
 
 const HOSTED_ZONE_ID = 'Z010502913W53UOD7EHXA';

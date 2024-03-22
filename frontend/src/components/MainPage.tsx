@@ -16,7 +16,7 @@ export const MainPage = () => {
             </UserIsSignedIn>
             <UserIsSignedOut>
                 <div className="flex justify-top items-center h-screen flex-col p-10">
-                    You Must Be Signed In To View FF Ideas
+                    You Must Be Signed In To View Learn Be Curious Ideas
                 </div>
             </UserIsSignedOut>
         </>

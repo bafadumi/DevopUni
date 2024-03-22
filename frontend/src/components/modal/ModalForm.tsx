@@ -101,7 +101,7 @@ const ModalForm = ({ type, ffIdea, setOpen }: ModalFormProps) => {
                 <Box className="w-11/12" m={1}>
                     {type === AddOrUpdate.ADD ? (
                         <IdeaFormComponent
-                            validLabel={'Funky Friday Idea Name'}
+                            validLabel={'Learn Be Curious Idea Name'}
                             invalidLabel={'Invalid Idea Name'}
                             isValid={nameIsValid}
                             setProp={setName}
