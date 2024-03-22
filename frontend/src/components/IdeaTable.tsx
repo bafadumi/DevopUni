@@ -35,10 +35,6 @@ export const IdeaTable = () => {
             return (
                 <div className="flex justify-center items-center h-screen flex-col">
                     <Typography>No Ideas Currently Available</Typography>
-                    <AddOrUpdateModal {...{ type: AddOrUpdate.ADD }} />
-                    <Typography color="error" variant="body2">
-                        {error}
-                    </Typography>
                 </div>
             );
         }

@@ -10,6 +10,7 @@ export const MainPage = () => {
                 <div className="p-5">
                     <div className="flex justify-center mb-4 items-center flex-col">
                         <AddOrUpdateModal {...{ type: AddOrUpdate.ADD }} />
+                        <AddOrUpdateModal {...{ type: AddOrUpdate.UPDATE }} />
                     </div>
                     <IdeaTable />
                 </div>
