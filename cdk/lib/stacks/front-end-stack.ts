@@ -32,11 +32,6 @@ export class UIStack extends cdk.Stack {
             zoneName: hostedZoneName,
         });
 
-        const domainCertificate = new acm.DnsValidatedCertificate(this, `${stage}DevOpsAssignmentCertificate`, {
-            domainName,
-            hostedZone,
-        });
-
         const assetsBucket = new s3.Bucket(this, `${stage}DevOpsAssignmentAssetBucket`, {
             bucketName: domainName,
             removalPolicy: cdk.RemovalPolicy.DESTROY,
@@ -45,8 +40,6 @@ export class UIStack extends cdk.Stack {
         assetsBucket.grantRead(cloudFrontIdentity);
 
         const cloudFrontDistribution = new cloudfront.Distribution(this, `${stage}DevOpsAssignmentDistribution`, {
-            certificate: domainCertificate,
-            domainNames: [domainName],
             enableLogging: true,
             defaultRootObject: DEFAULT_ROOT_OBJECT,
             defaultBehavior: {
@@ -54,6 +47,7 @@ export class UIStack extends cdk.Stack {
                     originAccessIdentity: cloudFrontIdentity,
                 }),
             },
+            minimumProtocolVersion: cloudfront.SecurityPolicyProtocol.TLS_V1_2_2019,
         });
 
         new route53.ARecord(this, `${stage}DevOpsDomainToDistributionRecord`, {

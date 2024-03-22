@@ -42,7 +42,7 @@ export class BackendStack extends Stack {
         });
 
         const routingLambda = new lambda.Function(this, `${stage}DevOpsAssignmentRoutingLambda`, {
-            runtime: lambda.Runtime.NODEJS_14_X,
+            runtime: lambda.Runtime.NODEJS_16_X,
             code: new lambda.AssetCode(assetRoute),
             handler: HANDLER_ROUTE,
             environment: {
