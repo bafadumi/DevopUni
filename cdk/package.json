@@ -1,12 +1,23 @@
 {
-  "name": "cdk",
+  "name": "devop_uni",
+  "version": "0.1.0",
+  "bin": {
+    "infrastructure": "bin/devop_uni.js"
+  },
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": " npm run prettier",
+    "build": "tsc",
+    "watch": "tsc -w",
+    "test": "jest",
+    "test-integration": "jest",
     "cdk": "cdk",
-    "clean": "rm -fr node_modules cdk.out",
-    "prettier": "prettier --check '{lib,tst}/**/*.ts'",
-    "prettier-fix": "prettier --write '{lib,tst}/**/*.ts'",
-    "test": "jest"
+    "lint": "eslint -c .eslintrc.json --format stylish && prettier --check '{lib,tst}/**/*.ts'",
+    "lint-fix": "eslint --fix -c .eslintrc.json --format stylish && prettier --write '{lib,tst}/**/*.ts'",
+    "ci": "npm ci"
   },
   "devDependencies": {
     "@types/jest": "^29.5.12",
